@@ -1,8 +1,40 @@
 import click
 
 @click.command()
-def hello():
-    click.echo('Hello World!')
+@click.option('-d', '--directory', default='.',
+              type=click.Path(exists=True, writable=True, resolve_path=True),
+              help='Directory to perform search')
+@click.option('-p', '--pattern', default='.*',
+              help='Regex pattern to match files with')
+@click.option('-t', '--target', default='\(index)',
+              help='Regex pattern to replace files with')
+@click.option('-r', '--replace', default=False, type=click.BOOL,
+              help='Boolean to replace files')
+def rename(directory, pattern, target, replace):
+    
+    import os
+    import re
+    import shutil
+    print 'Matching in directory: %s' % directory
+    print 'Matching file pattern: %s' % pattern
+    print 'Target file pattern: %s' % target
+    print '------------------------'
+
+    os.chdir(directory)
+    all_files = os.listdir(directory)
+    files = [f for f in all_files if re.search(pattern, f)]
+    
+    for i, filename in enumerate(files):
+        tar = re.sub(r'\\\(index\)', str(i), target)
+        replacement = re.sub(pattern, tar, filename)
+        
+        if replace:
+            print 'Renaming %s to %s' % (filename, replacement)
+            os.rename(filename, replacement)
+        else:
+            print 'Copying %s to %s' % (filename, replacement)
+            shutil.copyfile(filename, replacement)
+        
 
 # import os
 # import sys

@@ -16,6 +16,6 @@ setup(name='rename',
       ],
       entry_points='''
         [console_scripts]
-        rename=rename.rename:hello
+        rename=rename.rename:rename
       '''
       )
